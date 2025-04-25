@@ -44,8 +44,11 @@ type Credentials struct {
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-	var creds Credentials
-	_ = json.NewDecoder(r.Body).Decode(&creds)
+	creds := Credentials{}
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		http.Error(w, "Invalid Json Format", http.StatusUnauthorized)
+		return
+	}
 
 	// Dummy authentication
 	if creds.Username != "admin" || creds.Password != "pass" {
